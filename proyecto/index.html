@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TEL 315 | Sistema de Realidad Aumentada</title>
+
+  <!-- Bibliotecas oficiales: A-Frame v1.4.2 y AR.js v3.4.5 -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+
+  <!-- Hoja de estilos profesional -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- CAPA DE INTERFAZ DE USUARIO (HUD) -->
+  <header class="hud-header">
+    <div class="glass-card student-info">
+      <div class="tag-course">UCB • TEL 315 • COMUNICACIONES MÓVILES</div>
+      <!-- REEMPLAZA CON TU NOMBRE COMPLETO -->
+      <h1 class="student-name">Joan Henry Romero Huanca</h1>
+    </div>
+
+    <div class="glass-card status-panel">
+      <div class="status-row">
+        <span class="label">ESCALA:</span>
+        <span id="badge-scale" class="value-highlight">Normal (1.0x)</span>
+      </div>
+      <div class="status-row">
+        <span id="led-indicator" class="led led-idle"></span>
+        <span id="status-text" class="status-msg">Buscando marcador...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- RETÍCULA DE ENCUADRE (No bloquea la vista ni el toque) -->
+  <div class="reticle-container" aria-hidden="true">
+    <div class="reticle-corner top-left"></div>
+    <div class="reticle-corner top-right"></div>
+    <div class="reticle-corner bottom-left"></div>
+    <div class="reticle-corner bottom-right"></div>
+  </div>
+
+  <!-- CONTROLES INFERIORES -->
+  <footer class="hud-footer">
+    <button id="btn-toggle-scale" class="btn-primary" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+      <span>Cambiar tamaño</span>
+    </button>
+  </footer>
+
+  <!-- ESCENA DE REALIDAD AUMENTADA (A-Frame + AR.js) -->
+  <a-scene
+    embedded
+    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true; antialias: true; colorManagement: true;"
+  >
+    <!-- Iluminación profesional para resaltar volumen y perspectiva 3D -->
+    <a-light type="ambient" color="#ffffff" intensity="0.75"></a-light>
+    <a-light type="directional" color="#ffffff" intensity="0.85" position="1 3 2"></a-light>
+
+    <!-- TARJETA A: Patrón 'hiro' -> Cubo Azul -->
+    <a-marker preset="hiro" id="marker-hiro">
+      <a-entity id="group-hiro" scale="1 1 1">
+        <!-- Base sutil de referencia espacial -->
+        <a-plane position="0 0.01 0" rotation="-90 0 0" width="1.15" height="1.15" color="#38bdf8" opacity="0.25"></a-plane>
+        <!-- Cubo Azul principal -->
+        <a-box
+          id="mesh-cube"
+          position="0 0.52 0"
+          width="1"
+          height="1"
+          depth="1"
+          color="#1d4ed8"
+          material="roughness: 0.3; metalness: 0.15;"
+        ></a-box>
+      </a-entity>
+    </a-marker>
+
+    <!-- TARJETA B: Patrón 'kanji' -> Esfera Roja -->
+    <a-marker preset="kanji" id="marker-kanji">
+      <a-entity id="group-kanji" scale="1 1 1">
+        <!-- Base circular sutil de referencia espacial -->
+        <a-ring position="0 0.01 0" rotation="-90 0 0" radius-inner="0.48" radius-outer="0.56" color="#f87171" opacity="0.45"></a-ring>
+        <!-- Esfera Roja principal -->
+        <a-sphere
+          id="mesh-sphere"
+          position="0 0.52 0"
+          radius="0.5"
+          segments-width="32"
+          segments-height="32"
+          color="#dc2626"
+          material="roughness: 0.25; metalness: 0.15;"
+        ></a-sphere>
+      </a-entity>
+    </a-marker>
+
+    <!-- Cámara vinculada al dispositivo -->
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <!-- Lógica de control e interacción -->
+  <script src="app.js"></script>
+</body>
+</html>
